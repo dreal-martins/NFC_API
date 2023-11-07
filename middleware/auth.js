@@ -23,7 +23,7 @@ const protect = asyncHandler(async (req, res, next) => {
 
 const protectContractor = async (req, res, next) => {
   let token;
-  token = req.cookies.jwt;
+  token = req.cookies.jwtContractor;
 
   try {
     if (token) {

@@ -10,7 +10,7 @@ const loginContractor = asyncHandler(async (req, res) => {
     if (contractor && (await contractor.matchPassword(password))) {
       const token = generateContractorToken(contractor);
 
-      res.cookie("jwt", token, {
+      res.cookie("jwtContractor", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
