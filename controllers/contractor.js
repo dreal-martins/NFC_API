@@ -1,6 +1,5 @@
 const asyncHandler = require("express-async-handler");
 const Contractor = require("../models/Contractor");
-const Note = require("../models/Note");
 const { generateContractorToken } = require("../utils/generateToken");
 
 const loginContractor = asyncHandler(async (req, res) => {
@@ -65,7 +64,7 @@ const updateContractorProfile = asyncHandler(async (req, res) => {
 
     await contractor.save();
     const updatedContractor = { ...contractor._doc, password: undefined };
-    res.json({
+    res.status(200).json({
       message: "Contractor profile updated successfully",
       contractor: updatedContractor,
     });

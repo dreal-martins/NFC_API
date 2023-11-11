@@ -1,23 +1,19 @@
 const asyncHandler = require("express-async-handler");
 const Contractor = require("../models/Contractor");
 const Contract = require("../models/Contract");
+const StackHolder = require("../models/StackHolder");
 const generateRandomPassword = require("../utils/generatePassword");
-const sendLoginDetailsToContractor = require("../utils/sendLoginDetails");
+const sendLoginDetails = require("../utils/sendLoginDetails");
 
-// @desc Create Contract
-// route POST /admin/createcontract
+// @desc Create Contractor
+// route POST /admin/createcontractor
 // @access Private
 const createContractor = asyncHandler(async (req, res) => {
   try {
-    const {
-      contractorCompanyName,
-      contractorCompanyAddress,
-      contractorEmail,
-      contractorProjectType,
-    } = req.body;
+    const { name, address, email, projectType } = req.body;
 
     const contractorExist = await Contractor.findOne({
-      contractorEmail: contractorEmail.toLowerCase(),
+      contractorEmail: email.toLowerCase(),
     });
 
     if (contractorExist) {
@@ -28,19 +24,19 @@ const createContractor = asyncHandler(async (req, res) => {
       const randomPassword = generateRandomPassword(10);
 
       const contractor = await Contractor.create({
-        contractorCompanyName,
-        contractorCompanyAddress,
-        contractorEmail,
-        contractorProjectType,
+        name,
+        address,
+        email,
+        projectType,
         password: randomPassword,
       });
 
       const loginDetails = {
-        email: contractorEmail,
+        email: email,
         password: randomPassword,
       };
 
-      sendLoginDetailsToContractor(contractorEmail, loginDetails);
+      sendLoginDetails(email, loginDetails);
 
       if (contractor) {
         const { password, ...userWithoutPassword } = contractor._doc;
@@ -115,7 +111,6 @@ const getContractors = asyncHandler(async (req, res) => {
 // @access Private
 const createContract = asyncHandler(async (req, res) => {
   const { user } = req;
-
   if (user.role !== "admin") {
     return res.status(403).json({
       success: false,
@@ -125,27 +120,25 @@ const createContract = asyncHandler(async (req, res) => {
 
   const {
     contractorId,
-    contractName,
-    sponsorName,
-    sponsorEmailAddress,
-    sponsorAddress,
-    sponsorPhoneNumber,
+    stakeholderId,
+    name,
+    status,
     description,
     startDate,
     endDate,
-    status,
   } = req.body;
 
   const contractor = await Contractor.findById(contractorId);
+  const stakeholder = await StackHolder.findById(stakeholderId);
 
-  if (!contractor) {
+  if (!contractor || !stakeholder) {
     return res
       .status(404)
-      .json({ success: false, err: "Contractor not found" });
+      .json({ success: false, error: "Contractor or stakeholder not found" });
   }
 
   const contractExist = await Contract.findOne({
-    contractName: contractName.toLowerCase(),
+    name: name,
   });
 
   if (contractExist) {
@@ -156,16 +149,26 @@ const createContract = asyncHandler(async (req, res) => {
 
   const contract = await Contract.create({
     contractor: contractorId,
-    contractName,
-    sponsorName,
-    sponsorEmailAddress,
-    sponsorAddress,
-    sponsorPhoneNumber,
+    stakeholder: stakeholderId,
+    name,
+    status,
     description,
     startDate,
     endDate,
-    status,
   });
+
+  if (!contractor.assignedContracts) {
+    contractor.assignedContracts = [];
+  }
+  contractor.assignedContracts.push(contract);
+
+  if (!stakeholder.assignedContracts) {
+    stakeholder.assignedContracts = [];
+  }
+  stakeholder.assignedContracts.push(contract);
+
+  await contractor.save();
+  await stakeholder.save();
 
   if (contract) {
     return res.status(201).json({ success: true, data: contract });
@@ -176,6 +179,9 @@ const createContract = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Get All Contract
+// route GET /admin/contract
+// @access Private
 const getAllContracts = asyncHandler(async (req, res) => {
   try {
     const contracts = await Contract.find({});
@@ -196,9 +202,66 @@ const getAllContracts = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Create Stackholder
+// route POST /admin/createstackholder
+// @access Private
+const createStackHolder = asyncHandler(async (req, res) => {
+  try {
+    const { user } = req;
+    if (user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access forbidden for non-admin users",
+      });
+    }
+
+    const { name, email, role } = req.body;
+    const stackholderExist = await StackHolder.findOne({
+      email: email.toLowerCase(),
+    });
+
+    if (stackholderExist) {
+      return res
+        .status(400)
+        .json({ success: false, err: "Stackholder already exists" });
+    } else {
+      const randomPassword = generateRandomPassword(10);
+
+      const stackholder = await StackHolder.create({
+        name,
+        email,
+        password: randomPassword,
+        role,
+      });
+
+      const loginDetails = {
+        email: email,
+        password: randomPassword,
+      };
+
+      sendLoginDetails(email, loginDetails);
+      if (stackholder) {
+        const { password, ...userWithoutPassword } = stackholder._doc;
+        res.status(200).json({ success: true, data: userWithoutPassword });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "Error creating stackholder account.",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, err: "Internal Server Error" });
+  }
+});
+
 module.exports = {
   createContractor,
   getContractorById,
+  createStackHolder,
   getAllContracts,
   getContractors,
   createContract,

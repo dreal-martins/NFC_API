@@ -11,16 +11,17 @@ connectDB();
 const user = require("./routes/users");
 const contractor = require("./routes/contractor");
 const admin = require("./routes/admin");
+const stackholder = require("./routes/stackholder");
 
 const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
-
 app.use("/api/user", user);
 app.use("/api/admin", admin);
 app.use("/api/contractor", contractor);
+app.use("/api/stackholder", stackholder);
 
 app.use(notFound);
 app.use(errorHandler);

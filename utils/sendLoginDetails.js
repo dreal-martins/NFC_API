@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-const sendLoginDetailsEmail = (contractorEmail, loginDetails) => {
+const sendLoginDetailsEmail = (email, loginDetails) => {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
@@ -11,7 +11,7 @@ const sendLoginDetailsEmail = (contractorEmail, loginDetails) => {
 
   const mailOptions = {
     from: process.env.ADMIN_EMAIL,
-    to: contractorEmail,
+    to: email,
     subject: "Login Details",
     text: `Your login details:\nEmail: ${loginDetails.email}\nPassword: ${loginDetails.password}`,
   };

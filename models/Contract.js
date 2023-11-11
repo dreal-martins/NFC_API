@@ -1,47 +1,36 @@
 const mongoose = require("mongoose");
 
 const contractSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    require: true,
+  },
+  status: {
+    type: String,
+    enum: ["new", "assigned", "completed"],
+    default: "new",
+  },
+  description: {
+    type: String,
+    require: true,
+  },
+  startDate: {
+    type: String,
+    required: true,
+  },
+  endDate: {
+    type: String,
+    required: true,
+  },
   contractor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Contractor",
     required: true,
   },
-  contractName: {
-    type: String,
+  stakeholder: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Stakeholder",
     required: true,
-  },
-  sponsorName: {
-    type: String,
-    required: true,
-  },
-  sponsorAddress: {
-    type: String,
-    required: true,
-  },
-  sponsorPhoneNumber: {
-    type: String,
-    required: true,
-  },
-  sponsorEmailAddress: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  startDate: {
-    type: Date,
-    required: true,
-  },
-  endDate: {
-    type: Date,
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ["new", "assigned", "in progress", "overdue"],
-    default: "new",
   },
 });
 

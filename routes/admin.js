@@ -6,6 +6,7 @@ const {
   createContract,
   getAllContracts,
   getContractorById,
+  createStackHolder,
 } = require("../controllers/admin");
 const { registerUser } = require("../controllers/users");
 const { protect, isAdmin } = require("../middleware/auth");
@@ -15,6 +16,7 @@ router.route("/createcontractor").post(protect, isAdmin, createContractor);
 router.route("/contractors").get(protect, isAdmin, getContractors);
 router.route("/createcontract").post(protect, isAdmin, createContract);
 router.route("/contracts").get(protect, isAdmin, getAllContracts);
+router.route("/createstackholder").post(protect, isAdmin, createStackHolder);
 router
   .route("/contractor/:contractorId")
   .get(protect, isAdmin, getContractorById);

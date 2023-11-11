@@ -23,7 +23,9 @@ const getNotesByContract = asyncHandler(async (req, res) => {
   try {
     const { contractId } = req.params;
 
-    const notes = await Note.find({ contract: contractId });
+    const notes = await Note.find({ contract: contractId }).populate(
+      "contract"
+    );
     const noteCount = notes.length;
 
     if (!notes) {
@@ -34,6 +36,7 @@ const getNotesByContract = asyncHandler(async (req, res) => {
       return res.status(200).json({ success: true, noteCount, notes });
     }
   } catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json({ success: false, err: "Internal Server Error" });

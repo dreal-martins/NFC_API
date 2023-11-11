@@ -22,6 +22,9 @@ const contractorSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  assignedContracts: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Contract" },
+  ],
 });
 
 contractorSchema.pre("save", async function (next) {
@@ -36,5 +39,5 @@ contractorSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const Contractor = mongoose.model("Contractors", contractorSchema);
+const Contractor = mongoose.model("Contractor", contractorSchema);
 module.exports = Contractor;

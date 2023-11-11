@@ -31,4 +31,23 @@ const generateContractorToken = (contractor) => {
   return token;
 };
 
-module.exports = { generateUserToken, generateContractorToken };
+const generateStackholderToken = (stackholder) => {
+  const payload = {
+    _id: stackholder._id,
+    name: stackholder.name,
+    email: stackholder.email,
+    role: stackholder.role,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+
+  return token;
+};
+
+module.exports = {
+  generateUserToken,
+  generateContractorToken,
+  generateStackholderToken,
+};
