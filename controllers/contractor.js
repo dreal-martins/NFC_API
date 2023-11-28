@@ -4,24 +4,19 @@ const { generateContractorToken } = require("../utils/generateToken");
 
 const loginContractor = asyncHandler(async (req, res) => {
   try {
-    const { contractorEmail, password } = req.body;
-    const contractor = await Contractor.findOne({ contractorEmail });
+    const { email, password } = req.body;
+    const contractor = await Contractor.findOne({ email });
     if (contractor && (await contractor.matchPassword(password))) {
       const token = generateContractorToken(contractor);
 
-      res.cookie("jwtContractor", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      res.setHeader("Authorization", `Bearer ${token}`);
 
       const data = {
         _id: contractor._id,
-        contractorCompanyName: contractor.contractorCompanyName,
-        contractorCompanyAddress: contractor.contractorCompanyAddress,
-        contractorEmail: contractor.contractorEmail,
-        contractorProjectType: contractor.contractorProjectType,
+        name: contractor.name,
+        address: contractor.address,
+        email: contractor.email,
+        ProjectType: contractor.projectType,
         token: token,
       };
 

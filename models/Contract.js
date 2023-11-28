@@ -22,16 +22,27 @@ const contractSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  cost: {
+    type: String,
+    required: true,
+  },
   contractor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Contractor",
     required: true,
   },
-  stakeholder: {
+  createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Stakeholder",
+    ref: "User",
     required: true,
   },
+  stakeholder: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Stakeholder",
+      required: true,
+    },
+  ],
 });
 
 const Contract = mongoose.model("Contract", contractSchema);

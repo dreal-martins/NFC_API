@@ -13,12 +13,7 @@ const authUser = asyncHandler(async (req, res) => {
     if (user && (await user.matchPassword(password))) {
       const token = generateUserToken(user);
 
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      res.setHeader("Authorization", `Bearer ${token}`);
 
       const data = {
         _id: user._id,

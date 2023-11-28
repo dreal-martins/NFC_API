@@ -8,20 +8,19 @@ const { notFound, errorHandler } = require("./middleware/error");
 dotenv.config({ path: "./config/config.env" });
 
 connectDB();
-const user = require("./routes/users");
 const contractor = require("./routes/contractor");
 const admin = require("./routes/admin");
-const stackholder = require("./routes/stackholder");
+const stakeholder = require("./routes/stakeHolder");
 
 const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
-app.use("/api/user", user);
+
 app.use("/api/admin", admin);
 app.use("/api/contractor", contractor);
-app.use("/api/stackholder", stackholder);
+app.use("/api/stakeholder", stakeholder);
 
 app.use(notFound);
 app.use(errorHandler);

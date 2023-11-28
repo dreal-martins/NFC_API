@@ -1,20 +1,16 @@
 const asyncHandler = require("express-async-handler");
-const StackHolder = require("../models/StackHolder");
+const Stackholder = require("../models/Stakeholder");
 const { generateStackholderToken } = require("../utils/generateToken");
 
-const loginStackholder = asyncHandler(async (req, res) => {
+const loginStakeholder = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
-    const stackholder = await StackHolder.findOne({ email });
+    const stackholder = await Stackholder.findOne({ email });
+
     if (stackholder && (await stackholder.matchPassword(password))) {
       const token = generateStackholderToken(stackholder);
 
-      res.cookie("jwtStackholder", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      res.setHeader("Authorization", `Bearer ${token}`);
 
       const data = {
         _id: stackholder._id,
@@ -37,7 +33,7 @@ const loginStackholder = asyncHandler(async (req, res) => {
   }
 });
 
-const updateStackholder = asyncHandler(async (req, res) => {
+const updateStakeholder = asyncHandler(async (req, res) => {
   try {
     const stackholder = req.user;
     const newPassword = req.body.newPassword;
@@ -69,4 +65,4 @@ const updateStackholder = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { loginStackholder, updateStackholder };
+module.exports = { loginStakeholder, updateStakeholder };

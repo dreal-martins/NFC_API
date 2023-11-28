@@ -26,5 +26,5 @@ stakeHolderSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const StakeHolder = mongoose.model("StakeHolder", stakeHolderSchema);
-module.exports = StakeHolder;
+const Stakeholder = mongoose.model("Stakeholder", stakeHolderSchema);
+module.exports = Stakeholder;

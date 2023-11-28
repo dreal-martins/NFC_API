@@ -2,19 +2,19 @@ const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 
 const contractorSchema = new mongoose.Schema({
-  contractorCompanyName: {
+  name: {
     type: String,
     required: true,
   },
-  contractorCompanyAddress: {
+  address: {
     type: String,
     required: true,
   },
-  contractorEmail: {
+  email: {
     type: String,
     required: true,
   },
-  contractorProjectType: {
+  projectType: {
     type: String,
     required: true,
   },

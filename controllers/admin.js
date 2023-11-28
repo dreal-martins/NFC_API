@@ -1,7 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const Contractor = require("../models/Contractor");
 const Contract = require("../models/Contract");
-const StackHolder = require("../models/StackHolder");
+const StackHolder = require("../models/Stakeholder");
+const User = require("../models/User");
 const generateRandomPassword = require("../utils/generatePassword");
 const sendLoginDetails = require("../utils/sendLoginDetails");
 
@@ -13,43 +14,48 @@ const createContractor = asyncHandler(async (req, res) => {
     const { name, address, email, projectType } = req.body;
 
     const contractorExist = await Contractor.findOne({
-      contractorEmail: email.toLowerCase(),
+      email: email,
     });
 
     if (contractorExist) {
       return res
         .status(400)
         .json({ success: false, err: "Contractor already exists" });
-    } else {
-      const randomPassword = generateRandomPassword(10);
+    }
 
-      const contractor = await Contractor.create({
-        name,
-        address,
-        email,
-        projectType,
-        password: randomPassword,
-      });
+    const randomPassword = generateRandomPassword(10);
+    const loginDetails = {
+      email: email,
+      password: randomPassword,
+    };
 
-      const loginDetails = {
-        email: email,
-        password: randomPassword,
-      };
+    const emailSent = await sendLoginDetails(email, loginDetails);
 
-      sendLoginDetails(email, loginDetails);
-
-      if (contractor) {
-        const { password, ...userWithoutPassword } = contractor._doc;
-        res.status(201).json({ success: true, data: userWithoutPassword });
-      } else {
-        return res.status(400).json({
-          success: false,
-          message: "Error creating contractor account.",
+    if (emailSent) {
+      try {
+        const contractor = await Contractor.create({
+          name,
+          address,
+          email,
+          projectType,
+          password: randomPassword,
         });
+
+        const { password, ...userWithoutPassword } = contractor._doc;
+        return res
+          .status(201)
+          .json({ success: true, data: userWithoutPassword });
+      } catch (dbError) {
+        return res
+          .status(500)
+          .json({ success: false, err: "Error creating contractor account" });
       }
+    } else {
+      return res
+        .status(500)
+        .json({ success: false, err: "Error sending login details email" });
     }
   } catch (error) {
-    console.error("Error:", error);
     return res
       .status(500)
       .json({ success: false, err: "Internal Server Error" });
@@ -84,9 +90,9 @@ const getContractorById = asyncHandler(async (req, res) => {
 // @desc Get All Contractors
 // route Get /admin/contractors
 // @access Private
-const getContractors = asyncHandler(async (req, res) => {
+const getAllContractors = asyncHandler(async (req, res) => {
   try {
-    const contractors = await Contractor.find({});
+    const contractors = await Contractor.find({}).select("-password");
 
     const contractorCount = contractors.length;
 
@@ -95,9 +101,7 @@ const getContractors = asyncHandler(async (req, res) => {
         .status(200)
         .json({ success: true, contractorCount, contractors });
     } else {
-      return res
-        .status(404)
-        .json({ success: false, message: "No Contracts Found" });
+      return res.status(200).json({ success: true, data: [] });
     }
   } catch (error) {
     return res
@@ -110,72 +114,77 @@ const getContractors = asyncHandler(async (req, res) => {
 // route POST /admin/createcontract
 // @access Private
 const createContract = asyncHandler(async (req, res) => {
-  const { user } = req;
-  if (user.role !== "admin") {
-    return res.status(403).json({
-      success: false,
-      message: "Access forbidden for non-admin users",
+  try {
+    const {
+      contractorId,
+      stakeholderId,
+      createdBy,
+      name,
+      status,
+      description,
+      startDate,
+      endDate,
+      cost,
+    } = req.body;
+
+    const contractor = await Contractor.findById(contractorId);
+    const stakeholder = await StackHolder.findById(stakeholderId);
+    const admin = await User.findById(createdBy);
+
+    if (!contractor || !stakeholder || !admin) {
+      return res.status(404).json({
+        success: false,
+        error: "Contractor or stakeholder or admin not found",
+      });
+    }
+
+    const contractExist = await Contract.findOne({
+      name: name,
     });
-  }
 
-  const {
-    contractorId,
-    stakeholderId,
-    name,
-    status,
-    description,
-    startDate,
-    endDate,
-  } = req.body;
+    if (contractExist) {
+      return res
+        .status(400)
+        .json({ success: false, err: "Contract already exists" });
+    }
 
-  const contractor = await Contractor.findById(contractorId);
-  const stakeholder = await StackHolder.findById(stakeholderId);
+    const contract = await Contract.create({
+      contractor: contractorId,
+      stakeholder: stakeholderId,
+      createdBy,
+      name,
+      status,
+      description,
+      startDate,
+      endDate,
+      cost,
+    });
 
-  if (!contractor || !stakeholder) {
-    return res
-      .status(404)
-      .json({ success: false, error: "Contractor or stakeholder not found" });
-  }
+    if (!contractor.assignedContracts) {
+      contractor.assignedContracts = [];
+    }
+    contractor.assignedContracts.push(contract);
 
-  const contractExist = await Contract.findOne({
-    name: name,
-  });
+    if (!stakeholder.assignedContracts) {
+      stakeholder.assignedContracts = [];
+    }
+    stakeholder.assignedContracts.push(contract);
 
-  if (contractExist) {
-    return res
-      .status(400)
-      .json({ success: false, err: "Contract already exists" });
-  }
+    await contractor.save();
+    await stakeholder.save();
 
-  const contract = await Contract.create({
-    contractor: contractorId,
-    stakeholder: stakeholderId,
-    name,
-    status,
-    description,
-    startDate,
-    endDate,
-  });
-
-  if (!contractor.assignedContracts) {
-    contractor.assignedContracts = [];
-  }
-  contractor.assignedContracts.push(contract);
-
-  if (!stakeholder.assignedContracts) {
-    stakeholder.assignedContracts = [];
-  }
-  stakeholder.assignedContracts.push(contract);
-
-  await contractor.save();
-  await stakeholder.save();
-
-  if (contract) {
-    return res.status(201).json({ success: true, data: contract });
-  } else {
+    if (contract) {
+      return res.status(201).json({ success: true, data: contract });
+    } else {
+      return res
+        .status(500)
+        .json({ success: false, err: "Can't create contract" });
+    }
+  } catch (error) {
+    console.log(error);
     return res
       .status(500)
-      .json({ success: false, err: "Internal Server Error" });
+      .json({ success: false, message: "Internal Server Error" });
   }
 });
 
@@ -191,9 +200,7 @@ const getAllContracts = asyncHandler(async (req, res) => {
     if (contractCount > 0) {
       return res.status(200).json({ success: true, contractCount, contracts });
     } else {
-      return res
-        .status(404)
-        .json({ success: false, message: "No Contracts Found" });
+      return res.status(200).json({ success: true, data: [] });
     }
   } catch (error) {
     return res
@@ -205,17 +212,10 @@ const getAllContracts = asyncHandler(async (req, res) => {
 // @desc Create Stackholder
 // route POST /admin/createstackholder
 // @access Private
-const createStackHolder = asyncHandler(async (req, res) => {
+const createStakeHolder = asyncHandler(async (req, res) => {
   try {
-    const { user } = req;
-    if (user.role !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Access forbidden for non-admin users",
-      });
-    }
-
     const { name, email, role } = req.body;
+
     const stackholderExist = await StackHolder.findOne({
       email: email.toLowerCase(),
     });
@@ -224,30 +224,86 @@ const createStackHolder = asyncHandler(async (req, res) => {
       return res
         .status(400)
         .json({ success: false, err: "Stackholder already exists" });
-    } else {
-      const randomPassword = generateRandomPassword(10);
+    }
 
-      const stackholder = await StackHolder.create({
-        name,
-        email,
-        password: randomPassword,
-        role,
-      });
+    const randomPassword = generateRandomPassword(10);
 
-      const loginDetails = {
-        email: email,
-        password: randomPassword,
-      };
+    const loginDetails = {
+      email: email,
+      password: randomPassword,
+    };
 
-      sendLoginDetails(email, loginDetails);
-      if (stackholder) {
-        const { password, ...userWithoutPassword } = stackholder._doc;
-        res.status(200).json({ success: true, data: userWithoutPassword });
-      } else {
-        return res.status(400).json({
-          success: false,
-          message: "Error creating stackholder account.",
+    const emailSent = await sendLoginDetails(email, loginDetails);
+
+    if (emailSent) {
+      try {
+        const stackholder = await StackHolder.create({
+          name,
+          email,
+          password: randomPassword,
+          role,
         });
+
+        const { password, ...userWithoutPassword } = stackholder._doc;
+        return res
+          .status(201)
+          .json({ success: true, data: userWithoutPassword });
+      } catch (dbError) {
+        return res
+          .status(500)
+          .json({ success: false, err: "Error creating stackholder account" });
+      }
+    } else {
+      return res
+        .status(500)
+        .json({ success: false, err: "Error sending login details email" });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, err: "Internal Server Error" });
+  }
+});
+
+// @desc Get All Stakeholders
+// route Get /admin/stackholder
+// @access Private
+const getAllStakeholders = asyncHandler(async (req, res) => {
+  try {
+    const stackholders = await StackHolder.find({}).select("-password");
+
+    const stackholderCount = stackholders.length;
+
+    if (stackholderCount > 0) {
+      return res
+        .status(200)
+        .json({ success: true, stackholderCount, stackholders });
+    } else {
+      return res.status(200).json({ success: true, data: [] });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+});
+
+// @desc Get a contractor profile
+// route GET /admin/stackholder/:id
+// @access Private
+const getStakeholderById = asyncHandler(async (req, res) => {
+  try {
+    const stakeholderId = req.params.stakeholderId;
+    if (stakeholderId) {
+      const stakeholder = await StackHolder.findById(stakeholderId).select(
+        "-password"
+      );
+      if (!stakeholder) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Stakeholder not found" });
+      } else {
+        return res.status(200).json({ success: true, stakeholder });
       }
     }
   } catch (error) {
@@ -261,8 +317,10 @@ const createStackHolder = asyncHandler(async (req, res) => {
 module.exports = {
   createContractor,
   getContractorById,
-  createStackHolder,
+  createStakeHolder,
   getAllContracts,
-  getContractors,
+  getAllStakeholders,
+  getAllContractors,
+  getStakeholderById,
   createContract,
 };

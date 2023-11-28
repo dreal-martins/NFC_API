@@ -9,10 +9,13 @@ const { createNote, getNotesByContract } = require("../controllers/note");
 const { protectContractor, protect } = require("../middleware/auth");
 
 router.post("/login", loginContractor);
-router.put("/profile", protectContractor, updateContractorProfile);
-router
-  .route("/:contractorId/contracts")
-  .get(protect, protectContractor, getContractsByContractor);
-router.post("/createnote", protectContractor, createNote);
-router.get("/note/:contractId", protectContractor, getNotesByContract);
+router.put("/profile", protectContractor, protect, updateContractorProfile);
+router.get(
+  "/:contractorId/contracts",
+  protectContractor,
+  protect,
+  getContractsByContractor
+);
+router.post("/createnote", protectContractor, protect, createNote);
+router.get("/note/:contractId", protectContractor, protect, getNotesByContract);
 module.exports = router;
