@@ -4,7 +4,6 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/error");
-
 dotenv.config({ path: "./config/config.env" });
 
 connectDB();

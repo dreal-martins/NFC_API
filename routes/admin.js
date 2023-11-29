@@ -18,6 +18,8 @@ const {
   getUserById,
   logoutUser,
 } = require("../controllers/users");
+const { getContractsByAdmin } = require("../controllers/contract");
+const { approveNote } = require("../controllers/note");
 const { protect, isAdmin } = require("../middleware/auth");
 
 router.route("/register").post(registerUser);
@@ -39,5 +41,7 @@ router
 router
   .route("/stakeholder/:stakeholderId")
   .get(protect, isAdmin, getStakeholderById);
+router.route("/:adminId/contracts").get(protect, isAdmin, getContractsByAdmin);
+router.put("/note/approve/:noteId", protect, isAdmin, approveNote);
 router.post("/logout", logoutUser);
 module.exports = router;

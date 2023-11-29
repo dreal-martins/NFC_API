@@ -42,7 +42,33 @@ const getNotesByContract = asyncHandler(async (req, res) => {
       .json({ success: false, err: "Internal Server Error" });
   }
 });
+
+const approveNote = asyncHandler(async (req, res) => {
+  try {
+    const { noteId } = req.params;
+
+    const note = await Note.findByIdAndUpdate(
+      noteId,
+      { status: "approved" },
+      { new: true }
+    );
+
+    if (!note) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Note not found" });
+    }
+
+    res.status(200).json({ success: true, data: note });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, err: "Internal Server Error" });
+  }
+});
 module.exports = {
   getNotesByContract,
   createNote,
+  approveNote,
 };
