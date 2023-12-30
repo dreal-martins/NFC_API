@@ -11,6 +11,8 @@ const createNote = asyncHandler(async (req, res) => {
       contract: contractId,
     });
 
+    console.log(newNote);
+
     res.status(201).json({ success: true, data: newNote });
   } catch (error) {
     return res

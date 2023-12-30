@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Contractor = require("../models/Contractor");
 const Contract = require("../models/Contract");
-const StackHolder = require("../models/Stakeholder");
+const StakeHolder = require("../models/Stakeholder");
 const User = require("../models/User");
 const generateRandomPassword = require("../utils/generatePassword");
 const sendLoginDetails = require("../utils/sendLoginDetails");
@@ -128,7 +128,7 @@ const createContract = asyncHandler(async (req, res) => {
     } = req.body;
 
     const contractor = await Contractor.findById(contractorId);
-    const stakeholder = await StackHolder.findById(stakeholderId);
+    const stakeholder = await StakeHolder.findById(stakeholderId);
     const admin = await User.findById(createdBy);
 
     if (!contractor || !stakeholder || !admin) {
@@ -136,16 +136,6 @@ const createContract = asyncHandler(async (req, res) => {
         success: false,
         error: "Contractor or stakeholder or admin not found",
       });
-    }
-
-    const contractExist = await Contract.findOne({
-      name: name,
-    });
-
-    if (contractExist) {
-      return res
-        .status(400)
-        .json({ success: false, err: "Contract already exists" });
     }
 
     const contract = await Contract.create({
@@ -203,6 +193,7 @@ const getAllContracts = asyncHandler(async (req, res) => {
       return res.status(200).json({ success: true, data: [] });
     }
   } catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json({ success: false, message: "Internal Server Error" });
@@ -214,9 +205,9 @@ const getAllContracts = asyncHandler(async (req, res) => {
 // @access Private
 const createStakeHolder = asyncHandler(async (req, res) => {
   try {
-    const { name, email, role } = req.body;
+    const { name, email, position } = req.body;
 
-    const stackholderExist = await StackHolder.findOne({
+    const stackholderExist = await StakeHolder.findOne({
       email: email.toLowerCase(),
     });
 
@@ -237,11 +228,11 @@ const createStakeHolder = asyncHandler(async (req, res) => {
 
     if (emailSent) {
       try {
-        const stackholder = await StackHolder.create({
+        const stackholder = await StakeHolder.create({
           name,
           email,
           password: randomPassword,
-          role,
+          position,
         });
 
         const { password, ...userWithoutPassword } = stackholder._doc;
@@ -249,6 +240,7 @@ const createStakeHolder = asyncHandler(async (req, res) => {
           .status(201)
           .json({ success: true, data: userWithoutPassword });
       } catch (dbError) {
+        console.log(dbError);
         return res
           .status(500)
           .json({ success: false, err: "Error creating stackholder account" });
@@ -270,7 +262,7 @@ const createStakeHolder = asyncHandler(async (req, res) => {
 // @access Private
 const getAllStakeholders = asyncHandler(async (req, res) => {
   try {
-    const stackholders = await StackHolder.find({}).select("-password");
+    const stackholders = await StakeHolder.find({}).select("-password");
 
     const stackholderCount = stackholders.length;
 
@@ -295,7 +287,7 @@ const getStakeholderById = asyncHandler(async (req, res) => {
   try {
     const stakeholderId = req.params.stakeholderId;
     if (stakeholderId) {
-      const stakeholder = await StackHolder.findById(stakeholderId).select(
+      const stakeholder = await StakeHolder.findById(stakeholderId).select(
         "-password"
       );
       if (!stakeholder) {
@@ -314,6 +306,57 @@ const getStakeholderById = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc delete contract
+// route GET /admin/contract/:id
+// @access Private
+const deleteContract = asyncHandler(async (req, res) => {
+  try {
+    const contractId = req.params.contractId;
+
+    if (contractId) {
+      const contract = await Contract.findByIdAndRemove(contractId);
+      if (!contract) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Contract not found" });
+      } else {
+        return res
+          .status(200)
+          .json({ success: true, message: "Contract delete sucessfully" });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, err: "Internal Server Error" });
+  }
+});
+
+// @desc get all user
+// route GET /admin/users
+// @access Private
+const getAllUsers = asyncHandler(async (req, res) => {
+  try {
+    const users = await User.find();
+    const contractors = await Contractor.find();
+    const stakeholders = await StakeHolder.find();
+
+    const usersCount = users.length;
+    const contractorsCount = contractors.length;
+    const stakeholdersCount = stakeholders.length;
+
+    res.json({
+      users: { data: users, count: usersCount },
+      contractors: { data: contractors, count: contractorsCount },
+      stakeholders: { data: stakeholders, count: stakeholdersCount },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = {
   createContractor,
   getContractorById,
@@ -322,5 +365,7 @@ module.exports = {
   getAllStakeholders,
   getAllContractors,
   getStakeholderById,
+  getAllUsers,
+  deleteContract,
   createContract,
 };

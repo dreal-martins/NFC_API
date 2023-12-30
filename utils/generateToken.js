@@ -22,6 +22,7 @@ const generateContractorToken = (contractor) => {
     contractorCompanyAddress: contractor.contractorCompanyAddress,
     contractorEmail: contractor.contractorEmail,
     contractorProjectType: contractor.contractorProjectType,
+    role: "contractor",
   };
 
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -36,7 +37,8 @@ const generateStackholderToken = (stackholder) => {
     _id: stackholder._id,
     name: stackholder.name,
     email: stackholder.email,
-    role: stackholder.role,
+    position: stackholder.role,
+    role: "stakeholder",
   };
 
   const token = jwt.sign(payload, process.env.JWT_SECRET, {

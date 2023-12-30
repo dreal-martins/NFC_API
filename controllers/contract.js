@@ -17,6 +17,7 @@ const getContractsByContractor = asyncHandler(async (req, res) => {
         .json({ success: true, contractCount, data: contracts });
     }
   } catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json({ success: false, err: "Internal Server Error" });

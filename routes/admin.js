@@ -9,6 +9,8 @@ const {
   getContractorById,
   createStakeHolder,
   getStakeholderById,
+  deleteContract,
+  getAllUsers,
 } = require("../controllers/admin");
 const {
   registerUser,
@@ -43,5 +45,8 @@ router
   .get(protect, isAdmin, getStakeholderById);
 router.route("/:adminId/contracts").get(protect, isAdmin, getContractsByAdmin);
 router.put("/note/approve/:noteId", protect, isAdmin, approveNote);
-router.post("/logout", logoutUser);
+router.delete("/contract/:contractId", protect, isAdmin, deleteContract);
+router.get("/users", protect, isAdmin, getAllUsers);
+router.post("/logout", protect, isAdmin, logoutUser);
+
 module.exports = router;

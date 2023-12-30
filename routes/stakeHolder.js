@@ -6,8 +6,9 @@ const {
 } = require("../controllers/stakeholder");
 const { getContractsByStakeHolder } = require("../controllers/contract");
 const { protect, protectStackholder } = require("../middleware/auth");
+const { logoutUser } = require("../controllers/users");
 
-router.post("/login", protect, protectStackholder, loginStakeholder);
+router.post("/login", loginStakeholder);
 router.put("/profile", protect, protectStackholder, updateStakeholder);
 router.get(
   "/:staholderId/contracts",
@@ -15,5 +16,6 @@ router.get(
   protectStackholder,
   getContractsByStakeHolder
 );
+router.post("/logout", protect, protectStackholder, logoutUser);
 
 module.exports = router;

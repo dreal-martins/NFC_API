@@ -80,12 +80,8 @@ const registerUser = asyncHandler(async (req, res) => {
 // @access Public
 const logoutUser = asyncHandler(async (req, res) => {
   try {
-    res.cookie("jwt", "", {
-      httpOnly: true,
-      expires: new Date(0),
-    });
-
-    res.status(200).json({ sucess: true, message: "User logged out" });
+    delete req.headers.authorization;
+    res.status(200).json({ sucess: true, message: "Logout Sucessfully" });
   } catch (error) {
     return res
       .status(500)
