@@ -5,7 +5,10 @@ const { generateContractorToken } = require("../utils/generateToken");
 const loginContractor = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
-    const contractor = await Contractor.findOne({ email });
+    const contractor = await Contractor.findOne({ email }).populate(
+      "assignedContracts"
+    );
+
     if (contractor && (await contractor.matchPassword(password))) {
       const token = generateContractorToken(contractor);
 
@@ -16,7 +19,8 @@ const loginContractor = asyncHandler(async (req, res) => {
         name: contractor.name,
         address: contractor.address,
         email: contractor.email,
-        ProjectType: contractor.projectType,
+        projectType: contractor.projectType,
+        assignedContracts: contractor.assignedContracts, // Now populated with actual contract data
         token: token,
       };
 

@@ -56,6 +56,7 @@ const createContractor = asyncHandler(async (req, res) => {
         .json({ success: false, err: "Error sending login details email" });
     }
   } catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json({ success: false, err: "Internal Server Error" });
@@ -104,6 +105,7 @@ const getAllContractors = asyncHandler(async (req, res) => {
       return res.status(200).json({ success: true, data: [] });
     }
   } catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json({ success: false, message: "Internal Server Error" });

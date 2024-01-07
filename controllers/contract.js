@@ -7,6 +7,7 @@ const getContractsByContractor = asyncHandler(async (req, res) => {
 
     const contracts = await Contract.find({ contractor: contractorId });
     const contractCount = contracts.length;
+
     if (!contracts) {
       return res
         .status(404)

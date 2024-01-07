@@ -18,10 +18,10 @@ const generateUserToken = (user) => {
 const generateContractorToken = (contractor) => {
   const payload = {
     _id: contractor._id,
-    contractorCompanyName: contractor.contractorCompanyName,
-    contractorCompanyAddress: contractor.contractorCompanyAddress,
-    contractorEmail: contractor.contractorEmail,
-    contractorProjectType: contractor.contractorProjectType,
+    name: contractor.name,
+    address: contractor.address,
+    email: contractor.email,
+    projectType: contractor.projectType,
     role: "contractor",
   };
 
