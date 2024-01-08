@@ -43,11 +43,6 @@ const contractSchema = new mongoose.Schema({
       required: true,
     },
   ],
-  note: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Note",
-    // required: true,
-  },
 });
 
 const Contract = mongoose.model("Contract", contractSchema);
