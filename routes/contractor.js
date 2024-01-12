@@ -13,11 +13,11 @@ router.post("/login", loginContractor);
 router.put("/profile", protectContractor, protect, updateContractorProfile);
 router.get(
   "/:contractorId/contracts",
-  protectContractor,
+  // protectContractor,
   protect,
   getContractsByContractor
 );
-router.post("/createnote", protectContractor, protect, createNote);
-router.get("/note/:contractId", protectContractor, protect, getNotesByContract);
-router.post("/logout", protect, protectContractor, logoutUser);
+router.post("/createnote", protect, createNote);
+router.get("/note/:contractId", protect, getNotesByContract);
+router.post("/logout", protect, logoutUser);
 module.exports = router;
