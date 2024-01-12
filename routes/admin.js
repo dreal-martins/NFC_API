@@ -35,7 +35,7 @@ router.route("/createcontractor").post(protect, isAdmin, createContractor);
 router.route("/contractors").get(protect, isAdmin, getAllContractors);
 router.route("/stakeholders").get(protect, isAdmin, getAllStakeholders);
 router.route("/createcontract").post(protect, isAdmin, createContract);
-router.route("/contracts").get(protect, isAdmin, getAllContracts);
+router.route("/:adminId/contracts").get(protect, isAdmin, getAllContracts);
 router.route("/createstakeholder").post(protect, isAdmin, createStakeHolder);
 router
   .route("/contractor/:contractorId")
@@ -43,7 +43,7 @@ router
 router
   .route("/stakeholder/:stakeholderId")
   .get(protect, isAdmin, getStakeholderById);
-router.route("/:adminId/contracts").get(protect, isAdmin, getContractsByAdmin);
+// router.route("/:adminId/contracts").get(protect, isAdmin, getContractsByAdmin);
 router.put("/note/approve/:noteId", protect, isAdmin, approveNote);
 router.delete("/contract/:contractId", protect, isAdmin, deleteContract);
 router.get("/users", protect, isAdmin, getAllUsers);

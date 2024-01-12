@@ -5,6 +5,7 @@ const StakeHolder = require("../models/Stakeholder");
 const User = require("../models/User");
 const generateRandomPassword = require("../utils/generatePassword");
 const sendLoginDetails = require("../utils/sendLoginDetails");
+const Note = require("../models/Note");
 
 // @desc Create Contractor
 // route POST /admin/createcontractor
@@ -185,14 +186,29 @@ const createContract = asyncHandler(async (req, res) => {
 // @access Private
 const getAllContracts = asyncHandler(async (req, res) => {
   try {
-    const contracts = await Contract.find({});
+    const adminId = req.params.adminId;
+    const contracts = await Contract.find({
+      createdBy: adminId,
+    });
 
     const contractCount = contracts.length;
 
-    if (contractCount > 0) {
-      return res.status(200).json({ success: true, contractCount, contracts });
+    if (!contracts) {
+      return res.status(404).json({ success: false, message: "No Contract" });
     } else {
-      return res.status(200).json({ success: true, data: [] });
+      // Fetch associated notes for each contract
+      const contractsWithNotes = await Promise.all(
+        contracts.map(async (contract) => {
+          const notes = await Note.find({ contract: contract._id });
+          return { ...contract.toObject(), notes };
+        })
+      );
+
+      console.log(contractsWithNotes);
+
+      return res
+        .status(200)
+        .json({ success: true, contractCount, data: contractsWithNotes });
     }
   } catch (error) {
     console.log(error);
