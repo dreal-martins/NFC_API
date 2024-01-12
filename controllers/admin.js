@@ -207,7 +207,7 @@ const getAllContracts = asyncHandler(async (req, res) => {
 // @access Private
 const createStakeHolder = asyncHandler(async (req, res) => {
   try {
-    const { name, email, position } = req.body;
+    const { name, email, role } = req.body;
 
     const stackholderExist = await StakeHolder.findOne({
       email: email.toLowerCase(),
@@ -234,7 +234,7 @@ const createStakeHolder = asyncHandler(async (req, res) => {
           name,
           email,
           password: randomPassword,
-          position,
+          role,
         });
 
         const { password, ...userWithoutPassword } = stackholder._doc;
