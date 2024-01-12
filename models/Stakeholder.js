@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const stakeHolderSchema = new mongoose.Schema({
   name: String,
   email: String,
-  position: String,
+  role: String,
   password: {
     type: String,
     require: true,
