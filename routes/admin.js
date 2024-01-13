@@ -26,10 +26,8 @@ const { protect, isAdmin } = require("../middleware/auth");
 
 router.route("/register").post(registerUser);
 router.post("/login", authUser);
-router
-  .route("/profiles")
-  .put(protect, isAdmin, updateUserProfile)
-  .get(protect, isAdmin, getUserProfiles);
+router.route("/profiles").get(protect, isAdmin, getUserProfiles);
+router.route("/profile").put(protect, isAdmin, updateUserProfile);
 router.route("/profile/:userId").get(getUserById);
 router.route("/createcontractor").post(protect, isAdmin, createContractor);
 router.route("/contractors").get(protect, isAdmin, getAllContractors);
