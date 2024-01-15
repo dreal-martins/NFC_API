@@ -46,10 +46,10 @@ const getNotesByContract = asyncHandler(async (req, res) => {
 const approveNote = asyncHandler(async (req, res) => {
   try {
     const { noteId } = req.params;
-
+    const { status } = req.body;
     const note = await Note.findByIdAndUpdate(
       noteId,
-      { status: "approved" },
+      { status: status },
       { new: true }
     );
 
