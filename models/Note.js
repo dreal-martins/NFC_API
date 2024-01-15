@@ -6,7 +6,7 @@ const noteSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ["pending approval", "approved", "rejected"],
-    default: "pending",
+    default: "pending approval",
   },
   contract: {
     type: mongoose.Schema.Types.ObjectId,
