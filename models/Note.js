@@ -5,7 +5,7 @@ const noteSchema = new mongoose.Schema({
   note: String,
   status: {
     type: String,
-    enum: ["pending", "approved"],
+    enum: ["pending approval", "approved"],
     default: "pending",
   },
   contract: {
