@@ -80,8 +80,15 @@ const registerUser = asyncHandler(async (req, res) => {
 // @access Public
 const logoutUser = asyncHandler(async (req, res) => {
   try {
+    // Set CORS headers for OPTIONS request
+    if (req.method === "OPTIONS") {
+      res.header("Access-Control-Allow-Methods", "POST");
+      res.status(200).end();
+      return;
+    }
+
     delete req.headers.authorization;
-    res.status(200).json({ sucess: true, message: "Logout Sucessfully" });
+    res.status(200).json({ success: true, message: "Logout Successfully" });
   } catch (error) {
     return res
       .status(500)
