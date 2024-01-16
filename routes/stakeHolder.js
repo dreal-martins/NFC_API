@@ -16,6 +16,6 @@ router.get(
   protectStackholder,
   getContractsByStakeHolder
 );
-router.post("/logout", protect, protectStackholder, logoutUser);
+// router.post("/logout", protect, protectStackholder, logoutUser);
 
 module.exports = router;

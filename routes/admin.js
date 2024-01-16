@@ -45,6 +45,6 @@ router
 router.put("/note/approve/:noteId", protect, isAdmin, approveNote);
 router.delete("/contract/:contractId", protect, isAdmin, deleteContract);
 router.get("/users", protect, isAdmin, getAllUsers);
-router.post("/logout", protect, isAdmin, logoutUser);
+// router.post("/logout", protect, isAdmin, logoutUser);
 
 module.exports = router;

@@ -19,5 +19,5 @@ router.get(
 );
 router.post("/createnote", protect, createNote);
 router.get("/note/:contractId", protect, getNotesByContract);
-router.post("/logout", protect, logoutUser);
+// router.post("/logout", protect, logoutUser);
 module.exports = router;
