@@ -23,7 +23,7 @@ const corsOptions = {
   allowedHeaders: "*",
 };
 
-app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.use("/api/admin", admin);
 app.use("/api/contractor", contractor);
