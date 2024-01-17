@@ -3,16 +3,17 @@ const Note = require("../models/Note");
 
 const createNote = asyncHandler(async (req, res) => {
   try {
-    const { name, note, contractId } = req.body;
+    const { name, note, contract } = req.body;
 
     const newNote = await Note.create({
       name,
       note,
-      contract: contractId,
+      contract,
     });
 
     res.status(201).json({ success: true, data: newNote });
   } catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json({ success: false, err: "Internal Server Error" });
