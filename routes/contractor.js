@@ -8,7 +8,10 @@ const { getContractsByContractor } = require("../controllers/contract");
 const { createNote, getNotesByContract } = require("../controllers/note");
 const { protectContractor, protect } = require("../middleware/auth");
 const { logoutUser } = require("../controllers/users");
-const { getAllStakeholders } = require("../controllers/admin");
+const {
+  getAllStakeholders,
+  getAllContractors,
+} = require("../controllers/admin");
 
 router.post("/login", loginContractor);
 router.put("/profile", protectContractor, protect, updateContractorProfile);
