@@ -5,12 +5,12 @@ const createNote = asyncHandler(async (req, res) => {
   try {
     const { name, note, contract } = req.body;
 
+    console.log(req.body);
     const newNote = await Note.create({
       name,
       note,
       contract,
     });
-
     res.status(201).json({ success: true, data: newNote });
   } catch (error) {
     console.log(error);
