@@ -7,9 +7,12 @@ const {
 const { getContractsByStakeHolder } = require("../controllers/contract");
 const { protect, protectStackholder } = require("../middleware/auth");
 const { logoutUser } = require("../controllers/users");
+const { getAllStakeholders } = require("../controllers/admin");
 
 router.post("/login", loginStakeholder);
 router.put("/profile", protect, protectStackholder, updateStakeholder);
+
+router.route("/stakeholders").get(protect, getAllStakeholders);
 router.get(
   "/:staholderId/contracts",
   protect,

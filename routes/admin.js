@@ -33,7 +33,7 @@ router.route("/createcontractor").post(protect, isAdmin, createContractor);
 router.route("/contractors").get(protect, getAllContractors);
 router.route("/stakeholders").get(protect, getAllStakeholders);
 router.route("/createcontract").post(protect, isAdmin, createContract);
-router.route("/:adminId/contracts").get(protect, isAdmin, getAllContracts);
+router.route("/:adminId/contracts").get(protect, getAllContracts);
 router.route("/createstakeholder").post(protect, isAdmin, createStakeHolder);
 router.route("/contractor/:contractorId").get(protect, getContractorById);
 router
