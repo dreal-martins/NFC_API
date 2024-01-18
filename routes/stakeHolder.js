@@ -15,8 +15,8 @@ const {
 router.post("/login", loginStakeholder);
 router.put("/profile", protect, protectStackholder, updateStakeholder);
 
-router.route("/stakeholders").get(protect, getAllStakeholders);
-router.route("/contractors").get(protect, getAllContractors);
+router.route("/stakeholders").get(protectStackholder, getAllStakeholders);
+router.route("/contractors").get(protectStackholder, getAllContractors);
 router.get(
   "/:staholderId/contracts",
   protect,
