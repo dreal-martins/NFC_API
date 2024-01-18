@@ -12,7 +12,7 @@ const { getAllStakeholders } = require("../controllers/admin");
 
 router.post("/login", loginContractor);
 router.put("/profile", protectContractor, protect, updateContractorProfile);
-
+router.route("/contractors").get(protect, getAllContractors);
 router.route("/stakeholders").get(protect, getAllStakeholders);
 router.get(
   "/:contractorId/contracts",

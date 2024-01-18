@@ -13,6 +13,7 @@ router.post("/login", loginStakeholder);
 router.put("/profile", protect, protectStackholder, updateStakeholder);
 
 router.route("/stakeholders").get(protect, getAllStakeholders);
+router.route("/contractors").get(protect, getAllContractors);
 router.get(
   "/:staholderId/contracts",
   protect,
