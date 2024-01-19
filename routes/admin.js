@@ -12,6 +12,7 @@ const {
   deleteContract,
   getAllUsers,
 } = require("../controllers/admin");
+const cors = require("cors");
 const {
   registerUser,
   authUser,
@@ -25,7 +26,7 @@ const { approveNote } = require("../controllers/note");
 const { protect, isAdmin } = require("../middleware/auth");
 
 router.route("/register").post(registerUser);
-// router.post("/login", authUser);
+router.post("/login", cors(), authUser);
 router.route("/profiles").get(protect, isAdmin, getUserProfiles);
 router.route("/profile").put(protect, isAdmin, updateUserProfile);
 router.route("/profile/:userId").get(getUserById);

@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const cors = require("cors");
 const {
   loginStakeholder,
   updateStakeholder,
@@ -12,7 +13,7 @@ const {
   getAllContractors,
 } = require("../controllers/admin");
 
-// router.post("/login", loginStakeholder);
+router.post("/login", cors(), loginStakeholder);
 router.put("/profile", protect, protectStackholder, updateStakeholder);
 
 router.route("/stakeholders").get(protectStackholder, getAllStakeholders);
