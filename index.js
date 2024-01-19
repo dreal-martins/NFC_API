@@ -24,7 +24,7 @@ const corsOptions = {
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 // app.options("/api/admin/logout", cors(corsOptions));
 
