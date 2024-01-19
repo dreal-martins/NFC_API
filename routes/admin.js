@@ -25,7 +25,7 @@ const { approveNote } = require("../controllers/note");
 const { protect, isAdmin } = require("../middleware/auth");
 
 router.route("/register").post(registerUser);
-router.post("/login", authUser);
+// router.post("/login", authUser);
 router.route("/profiles").get(protect, isAdmin, getUserProfiles);
 router.route("/profile").put(protect, isAdmin, updateUserProfile);
 router.route("/profile/:userId").get(getUserById);

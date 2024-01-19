@@ -12,7 +12,7 @@ const {
   getAllContractors,
 } = require("../controllers/admin");
 
-router.post("/login", loginStakeholder);
+// router.post("/login", loginStakeholder);
 router.put("/profile", protect, protectStackholder, updateStakeholder);
 
 router.route("/stakeholders").get(protectStackholder, getAllStakeholders);

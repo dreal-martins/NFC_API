@@ -10,25 +10,31 @@ connectDB();
 const contractor = require("./routes/contractor");
 const admin = require("./routes/admin");
 const stakeholder = require("./routes/stakeHolder");
-const { logoutUser } = require("./controllers/users");
+const { logoutUser, authUser } = require("./controllers/users");
+const { loginContractor } = require("./controllers/contractor");
+const { loginStakeholder } = require("./controllers/stakeholder");
 
 const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
-const corsOptions = {
-  origin: "http://localhost:3000",
-  credentials: true,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: "Authorization,Content-Type",
-};
+// const corsOptions = {
+//   origin: "http://localhost:3000",
+//   credentials: true,
+//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 
-app.use(cors(corsOptions));
+// };
+
+app.use(cors());
 
 // app.options("/api/admin/logout", cors(corsOptions));
-app.post("/api/admin/logout", cors(corsOptions), logoutUser);
-app.post("/api/contractor/logout", cors(corsOptions), logoutUser);
-app.post("/api/stakeholder/logout", cors(corsOptions), logoutUser);
+app.post("/api/admin/logout", cors(), logoutUser);
+app.post("/api/contractor/logout", cors(), logoutUser);
+app.post("/api/stakeholder/logout", cors(), logoutUser);
+
+app.post("/api/admin/login", cors(), authUser);
+app.post("/api/contractor/login", cors(), loginContractor);
+app.post("/api/stakeholder/login", cors(), loginStakeholder);
 
 app.use("/api/admin", admin);
 app.use("/api/contractor", contractor);

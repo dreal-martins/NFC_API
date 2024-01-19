@@ -13,7 +13,7 @@ const {
   getAllContractors,
 } = require("../controllers/admin");
 
-router.post("/login", loginContractor);
+// router.post("/login", loginContractor);
 router.put("/profile", protectContractor, protect, updateContractorProfile);
 router.route("/contractors").get(protectContractor, getAllContractors);
 router.route("/stakeholders").get(protectContractor, getAllStakeholders);
