@@ -17,7 +17,7 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://futo-msc.vercel.app",
   credentials: true,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: "Authorization,Content-Type",
