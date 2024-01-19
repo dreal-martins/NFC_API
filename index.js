@@ -32,7 +32,7 @@ app.post("/api/admin/login", cors(), authUser);
 app.post("/api/contractor/login", cors(), loginContractor);
 app.post("/api/stakeholder/login", cors(), loginStakeholder);
 
-app.post("/api/admin/logout", cors(), logoutUser);
+app.post("/api/admin/logout", cors(corsOptions), logoutUser);
 app.post("/api/contractor/logout", cors(), logoutUser);
 app.post("/api/stakeholder/logout", cors(), logoutUser);
 
