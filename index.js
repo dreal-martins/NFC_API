@@ -27,13 +27,14 @@ const corsOptions = {
 app.use(cors());
 
 // app.options("/api/admin/logout", cors(corsOptions));
-app.post("/api/admin/logout", cors(), logoutUser);
-app.post("/api/contractor/logout", cors(), logoutUser);
-app.post("/api/stakeholder/logout", cors(), logoutUser);
 
 app.post("/api/admin/login", cors(), authUser);
 app.post("/api/contractor/login", cors(), loginContractor);
 app.post("/api/stakeholder/login", cors(), loginStakeholder);
+
+app.post("/api/admin/logout", cors(), logoutUser);
+app.post("/api/contractor/logout", cors(), logoutUser);
+app.post("/api/stakeholder/logout", cors(), logoutUser);
 
 app.use("/api/admin", admin);
 app.use("/api/contractor", contractor);
