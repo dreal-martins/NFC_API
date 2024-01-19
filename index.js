@@ -18,19 +18,18 @@ const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
-// const corsOptions = {
-//   origin: "http://localhost:3000",
-//   credentials: true,
-//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-
-// };
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+};
 
 app.use(cors());
 
 // app.options("/api/admin/logout", cors(corsOptions));
-app.post("/api/admin/logout", cors(), logoutUser);
-app.post("/api/contractor/logout", cors(), logoutUser);
-app.post("/api/stakeholder/logout", cors(), logoutUser);
+app.post("/api/admin/logout", cors(corsOptions), logoutUser);
+app.post("/api/contractor/logout", cors(corsOptions), logoutUser);
+app.post("/api/stakeholder/logout", cors(corsOptions), logoutUser);
 
 app.post("/api/admin/login", cors(), authUser);
 app.post("/api/contractor/login", cors(), loginContractor);
