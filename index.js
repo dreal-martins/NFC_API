@@ -13,9 +13,6 @@ const stakeholder = require("./routes/stakeHolder");
 const { logoutUser } = require("./controllers/users");
 
 const app = express();
-
-app.use(cookieParser());
-app.use(express.json());
 const corsOptions = {
   origin: "http://localhost:3000",
   credentials: true,
@@ -24,6 +21,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+app.use(cookieParser());
+app.use(express.json());
 
 // app.options("/api/admin/logout", cors(corsOptions));
 app.post("/api/admin/logout", cors(corsOptions), logoutUser);
