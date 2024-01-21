@@ -114,13 +114,7 @@ const getContractsByAdmin = asyncHandler(async (req, res) => {
 });
 
 const changeContractStatus = asyncHandler(async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  res.header("Access-Control-Allow-Credentials", "true");
-
   const { contractId } = req.params;
-
   try {
     const contract = await Contract.findById(contractId);
 

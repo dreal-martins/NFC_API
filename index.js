@@ -13,22 +13,21 @@ const stakeholder = require("./routes/stakeHolder");
 const { logoutUser } = require("./controllers/users");
 
 const app = express();
-const corsOptions = {
-  origin: "http://localhost:3000",
-  credentials: true,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: "Authorization,Content-Type",
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
+// const corsOptions = {
+//   origin: "http://localhost:3000",
+//   credentials: true,
+//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//   allowedHeaders: "Authorization,Content-Type",
+// };
 
 app.use(cookieParser());
 app.use(express.json());
 
 // app.options("/api/admin/logout", cors(corsOptions));
-app.post("/api/admin/logout", cors(corsOptions), logoutUser);
-app.post("/api/contractor/logout", cors(corsOptions), logoutUser);
-app.post("/api/stakeholder/logout", cors(corsOptions), logoutUser);
+app.post("/api/admin/logout", cors(), logoutUser);
+app.post("/api/contractor/logout", cors(), logoutUser);
+app.post("/api/stakeholder/logout", cors(), logoutUser);
 
 app.use("/api/admin", admin);
 app.use("/api/contractor", contractor);
