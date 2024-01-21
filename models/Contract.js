@@ -7,7 +7,7 @@ const contractSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["new", "assigned", "completed"],
+    enum: ["new", "completed"],
     default: "new",
   },
   description: {

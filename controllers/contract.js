@@ -113,8 +113,37 @@ const getContractsByAdmin = asyncHandler(async (req, res) => {
   }
 });
 
+const changeContractStatus = asyncHandler(async (req, res) => {
+  const { contractId } = req.params;
+
+  try {
+    const contract = await Contract.findById(contractId);
+
+    if (!contract) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Contract not found" });
+    }
+
+    contract.status = "completed";
+
+    await contract.save();
+
+    return res.json({
+      success: true,
+      message: "Contract status updated to completed",
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+});
+
 module.exports = {
   getContractsByContractor,
   getContractsByStakeHolder,
   getContractsByAdmin,
+  changeContractStatus,
 };

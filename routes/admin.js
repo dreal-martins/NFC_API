@@ -21,7 +21,10 @@ const {
   getUserById,
   logoutUser,
 } = require("../controllers/users");
-const { getContractsByAdmin } = require("../controllers/contract");
+const {
+  getContractsByAdmin,
+  changeContractStatus,
+} = require("../controllers/contract");
 const { approveNote } = require("../controllers/note");
 const { protect, isAdmin } = require("../middleware/auth");
 
@@ -37,6 +40,9 @@ router.route("/createcontract").post(protect, isAdmin, createContract);
 router.route("/:adminId/contracts").get(protect, getAllContracts);
 router.route("/createstakeholder").post(protect, isAdmin, createStakeHolder);
 router.route("/contractor/:contractorId").get(protect, getContractorById);
+router
+  .route("/:contractId/updatestatus")
+  .put(protect, isAdmin, changeContractStatus);
 router
   .route("/stakeholder/:stakeholderId")
   .get(protect, isAdmin, getStakeholderById);
