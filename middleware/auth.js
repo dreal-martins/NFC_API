@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/User");
 const Contractor = require("../models/Contractor");
 const StackHolder = require("../models/Stakeholder");
+const SuperAdmin = require("../models/SuperAdmin");
 
 const getTokenFromHeader = (req) => {
   const authHeader = req.headers.authorization;
@@ -75,6 +76,29 @@ const protectStackholder = asyncHandler(async (req, res, next) => {
   }
 });
 
+const protectSuperAdmin = asyncHandler(async (req, res, next) => {
+  try {
+    const token = getTokenFromHeader(req);
+
+    if (!token) {
+      return res.status(401).json({ err: "Not authorized, no token" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const superadmin = await SuperAdmin.findById(decoded._id);
+
+    if (!superadmin) {
+      return res.status(401).json({ err: "Not authorized, invalid token" });
+    }
+
+    req.user = superadmin;
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.status(401).json({ err: "Not authorized, invalid token" });
+  }
+});
+
 const isAdmin = asyncHandler(async (req, res, next) => {
   try {
     const token = getTokenFromHeader(req);
@@ -100,4 +124,10 @@ const isAdmin = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { protect, isAdmin, protectContractor, protectStackholder };
+module.exports = {
+  protect,
+  isAdmin,
+  protectContractor,
+  protectStackholder,
+  protectSuperAdmin,
+};

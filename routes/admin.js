@@ -28,7 +28,7 @@ const {
 const { approveNote } = require("../controllers/note");
 const { protect, isAdmin } = require("../middleware/auth");
 
-router.route("/register").post(registerUser);
+// router.route("/register").post(registerUser);
 router.post("/login", cors(), authUser);
 router.route("/profiles").get(protect, isAdmin, getUserProfiles);
 router.route("/profile").put(protect, isAdmin, updateUserProfile);

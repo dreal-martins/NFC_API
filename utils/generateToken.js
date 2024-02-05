@@ -16,6 +16,22 @@ const generateUserToken = (user) => {
   return token;
 };
 
+const generateSuperAdminToken = (superAdmin) => {
+  const payload = {
+    _id: superAdmin._id,
+    name: superAdmin.name,
+    email: superAdmin.email,
+    phoneNumber: superAdmin.phoneNumber,
+    role: superAdmin.role,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+
+  return token;
+};
+
 const generateContractorToken = (contractor) => {
   const payload = {
     _id: contractor._id,
@@ -53,4 +69,5 @@ module.exports = {
   generateUserToken,
   generateContractorToken,
   generateStackholderToken,
+  generateSuperAdminToken,
 };

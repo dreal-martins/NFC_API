@@ -10,6 +10,7 @@ connectDB();
 const contractor = require("./routes/contractor");
 const admin = require("./routes/admin");
 const stakeholder = require("./routes/stakeHolder");
+const superadmin = require("./routes/superAdmin");
 const { logoutUser } = require("./controllers/users");
 
 const app = express();
@@ -20,10 +21,12 @@ app.use(express.json());
 app.post("/api/admin/logout", logoutUser);
 app.post("/api/contractor/logout", logoutUser);
 app.post("/api/stakeholder/logout", logoutUser);
+app.post("/api/superadmin/logout", logoutUser);
 
 app.use("/api/admin", admin);
 app.use("/api/contractor", contractor);
 app.use("/api/stakeholder", stakeholder);
+app.use("/api/superadmin", superadmin);
 
 app.use(notFound);
 app.use(errorHandler);
