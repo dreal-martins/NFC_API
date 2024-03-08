@@ -37,13 +37,11 @@ const createUser = asyncHandler(async (req, res) => {
         });
 
         const { password, ...userWithoutPassword } = user._doc;
-        return res
-          .status(201)
-          .json({
-            success: true,
-            msg: "admin created sucessfully",
-            data: userWithoutPassword,
-          });
+        return res.status(201).json({
+          success: true,
+          msg: "admin created sucessfully",
+          data: userWithoutPassword,
+        });
       } catch (dbError) {
         return res
           .status(500)
@@ -167,7 +165,27 @@ const registerSuperAdmin = asyncHandler(async (req, res) => {
   }
 });
 
+const getAllAdmins = asyncHandler(async (req, res) => {
+  try {
+    const admin = await User.find({}).select("-password");
+    const adminCount = admin.length;
+
+    if (adminCount > 0) {
+      res.status(200).json({ success: true, adminCount, admin });
+    } else {
+      return res.status(200).json({ success: true, data: [] });
+    }
+  } catch (error) {
+    console.log(error);
+
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+});
+
 module.exports = {
+  getAllAdmins,
   createUser,
   loginSuperAdmin,
   updateSuperAdminProfile,
